@@ -11,7 +11,8 @@ internal class GildedRoseTest {
         val app = GildedRose(items)
         app.updateQuality()
 
-        assertEquals(80, app.items.first().quality)
+        assertEquals(80, app.items[0].quality)
+        assertEquals(0, app.items[0].sellIn)
     }
 
     @Test
@@ -20,8 +21,8 @@ internal class GildedRoseTest {
         val app = GildedRose(items)
         app.updateQuality()
 
-        assertEquals(19, app.items.first().sellIn)
-        assertEquals(29, app.items.first().quality)
+        assertEquals(19, app.items[0].sellIn)
+        assertEquals(29, app.items[0].quality)
     }
 
     @Test
@@ -53,7 +54,7 @@ internal class GildedRoseTest {
     }
 
     @Test
-    fun `test quality decreases by two if sellIn has passed`() {
+    fun `test quality decreases by 2 if sellIn has passed`() {
         val items = arrayOf(Item(REGULAR, 0, 20))
         val app = GildedRose(items)
         app.updateQuality()
@@ -73,13 +74,29 @@ internal class GildedRoseTest {
     }
 
     @Test
-    fun `test quality does not go higher than 50`() {
-        val items = arrayOf(Item(BRIE, 4, 50), Item(CONCERT, 4, 50))
+    fun `test quality does not go higher than 50, except Sulfuras`() {
+        val items = arrayOf(
+            Item(BRIE, 4, 50),
+            Item(CONCERT, 4, 50),
+            Item(CONJURED, 4, 50),
+            Item(REGULAR, 4, 50)
+        )
         val app = GildedRose(items)
         app.updateQuality()
 
-        assertEquals(50, items[0].quality)
-        assertEquals(50, items[1].quality)
+        for (item in items) {
+            assertEquals(false, item.quality > 50)
+        }
+    }
+
+    @Test
+    fun `test conjured items quality decreases by 2`() {
+        val items = arrayOf(Item(CONJURED, 15, 15))
+        val app = GildedRose(items)
+        app.updateQuality()
+
+        assertEquals(14, items[0].sellIn)
+        assertEquals(13, items[0].quality)
     }
 
     @Test
@@ -88,7 +105,8 @@ internal class GildedRoseTest {
             Item(REGULAR, 4, 0),
             Item(BRIE, 4, 0),
             Item(CONCERT, 4, 0),
-            Item(SULFUR, 4, 0)
+            Item(SULFUR, 4, 0),
+            Item(CONJURED, 4, 1)
         )
 
         val app = GildedRose(items)

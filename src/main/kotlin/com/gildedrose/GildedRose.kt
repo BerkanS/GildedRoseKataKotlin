@@ -4,59 +4,81 @@ const val BRIE = "Aged Brie"
 const val CONCERT = "Backstage passes to a TAFKAL80ETC concert"
 const val SULFUR = "Sulfuras, Hand of Ragnaros"
 const val REGULAR = "Regular"
-
+const val CONJURED = "Conjured"
 
 class GildedRose(var items: Array<Item>) {
 
     fun updateQuality() {
-        for (i in items.indices) {
-            if (items[i].name != BRIE && items[i].name != CONCERT) {
-                if (items[i].quality > 0) {
-                    if (items[i].name != SULFUR) {
-                        items[i].quality = items[i].quality - 1
-                    }
+        for (item in items) {
+            when (item.name) {
+                BRIE -> {
+                    updateBrie(item)
                 }
-            } else {
-                if (items[i].quality < 50) {
-                    items[i].quality = items[i].quality + 1
 
-                    if (items[i].name == CONCERT) {
-                        if (items[i].sellIn < 11) {
-                            if (items[i].quality < 50) {
-                                items[i].quality = items[i].quality + 1
-                            }
-                        }
+                SULFUR -> {
+                    // Do nothing
+                }
 
-                        if (items[i].sellIn < 6) {
-                            if (items[i].quality < 50) {
-                                items[i].quality = items[i].quality + 1
-                            }
-                        }
-                    }
+                CONCERT -> {
+                    updateConcert(item)
+                }
+
+                CONJURED -> {
+                    updateRegularAndConjured(item)
+                }
+
+                else -> {
+                    updateRegularAndConjured(item)
                 }
             }
+        }
+    }
 
-            if (items[i].name != SULFUR) {
-                items[i].sellIn = items[i].sellIn - 1
+    private fun updateBrie(item: Item) {
+        if (item.quality < 50) {
+            item.quality++
+        }
+
+        item.sellIn = item.sellIn - 1
+
+        if (item.sellIn < 0 && item.quality < 50) {
+            item.quality++
+        }
+    }
+
+    private fun updateConcert(item: Item) {
+        if (item.quality < 50) {
+            item.quality++
+
+            if (item.sellIn < 11 && item.quality < 50) {
+                item.quality++
             }
 
-            if (items[i].sellIn < 0) {
-                if (items[i].name != BRIE) {
-                    if (items[i].name != CONCERT) {
-                        if (items[i].quality > 0) {
-                            if (items[i].name != SULFUR) {
-                                items[i].quality = items[i].quality - 1
-                            }
-                        }
-                    } else {
-                        items[i].quality = items[i].quality - items[i].quality
-                    }
-                } else {
-                    if (items[i].quality < 50) {
-                        items[i].quality = items[i].quality + 1
-                    }
-                }
+            if (item.sellIn < 6 && item.quality < 50) {
+                item.quality++
             }
+        }
+
+        item.sellIn = item.sellIn - 1
+
+        if (item.sellIn < 0) {
+            item.quality = 0
+        }
+    }
+
+    private fun updateRegularAndConjured(item: Item) {
+        if (item.quality > 0) {
+            item.quality--
+        }
+
+        if (item.name == CONJURED && item.quality > 0) {
+            item.quality--
+        }
+
+        item.sellIn--
+
+        if (item.sellIn < 0 && item.quality > 0) {
+            item.quality--
         }
     }
 

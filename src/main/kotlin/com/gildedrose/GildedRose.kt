@@ -24,11 +24,11 @@ class GildedRose(var items: Array<Item>) {
                 }
 
                 CONJURED -> {
-                    updateConjured(item)
+                    updateRegularAndConjured(item)
                 }
 
                 else -> {
-                    updateRegular(item)
+                    updateRegularAndConjured(item)
                 }
             }
         }
@@ -36,30 +36,26 @@ class GildedRose(var items: Array<Item>) {
 
     private fun updateBrie(item: Item) {
         if (item.quality < 50) {
-            item.quality = item.quality + 1
+            item.quality++
         }
 
         item.sellIn = item.sellIn - 1
 
         if (item.sellIn < 0 && item.quality < 50) {
-            item.quality = item.quality + 1
+            item.quality++
         }
     }
 
     private fun updateConcert(item: Item) {
         if (item.quality < 50) {
-            item.quality = item.quality + 1
+            item.quality++
 
-            if (item.sellIn < 11) {
-                if (item.quality < 50) {
-                    item.quality++
-                }
+            if (item.sellIn < 11 && item.quality < 50) {
+                item.quality++
             }
 
-            if (item.sellIn < 6) {
-                if (item.quality < 50) {
-                    item.quality++
-                }
+            if (item.sellIn < 6 && item.quality < 50) {
+                item.quality++
             }
         }
 
@@ -70,8 +66,12 @@ class GildedRose(var items: Array<Item>) {
         }
     }
 
-    private fun updateRegular(item: Item) {
+    private fun updateRegularAndConjured(item: Item) {
         if (item.quality > 0) {
+            item.quality--
+        }
+
+        if (item.name == CONJURED && item.quality > 0) {
             item.quality--
         }
 
@@ -82,16 +82,5 @@ class GildedRose(var items: Array<Item>) {
         }
     }
 
-    private fun updateConjured(item: Item) {
-        if (item.quality > 0) {
-            item.quality = item.quality - 2
-        }
-
-        item.sellIn--
-
-        if (item.sellIn < 0 && item.quality > 0) {
-            item.quality--
-        }
-    }
 }
 

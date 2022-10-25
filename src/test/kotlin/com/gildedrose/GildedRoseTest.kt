@@ -74,13 +74,19 @@ internal class GildedRoseTest {
     }
 
     @Test
-    fun `test quality does not go higher than 50`() {
-        val items = arrayOf(Item(BRIE, 4, 50), Item(CONCERT, 4, 50))
+    fun `test quality does not go higher than 50, except Sulfuras`() {
+        val items = arrayOf(
+            Item(BRIE, 4, 50),
+            Item(CONCERT, 4, 50),
+            Item(CONJURED, 4, 50),
+            Item(REGULAR, 4, 50)
+        )
         val app = GildedRose(items)
         app.updateQuality()
 
-        assertEquals(50, items[0].quality)
-        assertEquals(50, items[1].quality)
+        for (item in items) {
+            assertEquals(false, item.quality > 50)
+        }
     }
 
     @Test
@@ -99,7 +105,8 @@ internal class GildedRoseTest {
             Item(REGULAR, 4, 0),
             Item(BRIE, 4, 0),
             Item(CONCERT, 4, 0),
-            Item(SULFUR, 4, 0)
+            Item(SULFUR, 4, 0),
+            Item(CONJURED, 4, 1)
         )
 
         val app = GildedRose(items)
